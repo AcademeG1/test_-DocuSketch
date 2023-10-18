@@ -1,24 +1,43 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import Button from "./components/button/button";
+import {
+  fas,
+  faComputerMouse,
+  IconDefinition,
+} from "@fortawesome/free-solid-svg-icons";
+import "./App.css";
+import FieldIcon from "./components/fieldicon/FieldIcon";
 
-function App() {
+function App(): JSX.Element {
+  const icons = Object.values(fas);
+  const randomIcon = () => icons[Math.floor(Math.random() * icons.length)];
+
+  const [icon, setIcon] = useState<IconDefinition>(faComputerMouse);
+  const [timerStack, setTimerStack] = useState<IconDefinition[]>([]);
+
+  useEffect(() => {
+    setIcon(randomIcon);
+  }, []);
+
+  useEffect(() => {
+    timerStack.forEach((item, index) => {
+      setTimeout(() => {
+        setIcon(item);
+        const copyArr = timerStack;
+        copyArr.shift();
+        setTimerStack([...copyArr]);
+      }, 3000 * ++index);
+    });
+  }, [timerStack]);
+
+  const changeIcon = () => {
+    setTimerStack([...timerStack, randomIcon()]);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="field">
+      <Button changeIcon={changeIcon} />
+      <FieldIcon icon={icon} />
     </div>
   );
 }
